@@ -96,7 +96,7 @@ RSpec.describe 'V1::Tasks', type: :request do
         expect(json).to have_json_path('data/relationships/tags/data')
 
         expect(parsed_json['data']['relationships']['tags']['data'].size).to be > 0
-        expect(parsed_json['data']['included'].size).to be > 0
+        expect(parsed_json['included'].size).to be > 0
       end
 
       it 'should update task' do

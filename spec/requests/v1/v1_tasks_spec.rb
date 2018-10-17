@@ -34,9 +34,9 @@ RSpec.describe 'V1::Tasks', type: :request do
 
 
   describe 'POST /api/v1/tasks' do
-    let(:valid_attributes) { {"data":{	"type":"undefined","id":"undefined","attributes":{"title":"Do Homework"}}} }
+    let(:valid_attributes) { {"data":{"type":"undefined","id":"undefined","attributes":{"title":"Do Homework"}}} }
 
-    context 'create task' do
+    context 'create task with valid attributes' do
       before { post v1_tasks_url, params: valid_attributes }
 
       it 'should return 201' do
@@ -46,11 +46,36 @@ RSpec.describe 'V1::Tasks', type: :request do
       it 'should return created task' do
         expect(json).to have_json_path('data/id')
         expect(json).to have_json_path('data/attributes/title')
+        expect(json).to have_json_path('data/relationships/tags/data')
       end
 
       it 'should create task' do
         task = Task.find(parsed_json['data']['id'])
-        expect(task.title).to eq(parsed_json['data']['attributes']['title'])
+        expect(task.title).to eq('Do Homework')
+      end
+    end
+  end
+
+
+  describe 'PATCH /api/v1/tasks' do
+    let(:valid_attributes) { {"data":{"type":"tasks","id":"2","attributes":{"title":"Updated Task Title"}}} }
+
+    context 'update task with valid attributes' do
+      before { patch v1_task_url(2), params: valid_attributes }
+
+      it 'should return 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'should return updated task' do
+        expect(json).to have_json_path('data/id')
+        expect(json).to have_json_path('data/attributes/title')
+        expect(json).to have_json_path('data/relationships/tags/data')
+      end
+
+      it 'should update task' do
+        task = Task.find(2)
+        expect(task.title).to eq('Updated Task Title')
       end
     end
   end

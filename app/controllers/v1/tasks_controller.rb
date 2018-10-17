@@ -19,7 +19,7 @@ class V1::TasksController < ApplicationController
     if @task.save
       render json: @task, status: :created
     else
-      render json: @task.errors, status: :unprocessable_entity
+      render json: @task, status: :unprocessable_entity, serializer: ActiveModel::Serializer::ErrorSerializer
     end
   end
 
@@ -28,7 +28,7 @@ class V1::TasksController < ApplicationController
     if @task.update(task_params)
       render json: @task, include: ['tags']
     else
-      render json: @task.errors, status: :unprocessable_entity
+      render json: @task, status: :unprocessable_entity, serializer: ActiveModel::Serializer::ErrorSerializer
     end
   end
 

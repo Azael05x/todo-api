@@ -37,6 +37,7 @@ RSpec.describe 'V1::Tasks', type: :request do
 
   describe 'POST /api/v1/tasks' do
     let(:valid_attributes) { {"data":{"type":"undefined","id":"undefined","attributes":{"title":"Do Homework"}}} }
+    let(:invalid_attributes) { {"data":{"type":"undefined","id":"undefined","attributes":{}}} }
 
     context 'create task with valid attributes' do
       before { post v1_tasks_url, params: valid_attributes }
@@ -56,12 +57,27 @@ RSpec.describe 'V1::Tasks', type: :request do
         expect(task.title).to eq('Do Homework')
       end
     end
+
+    context 'create task with invalid attributes' do
+      before { post v1_tasks_url, params: invalid_attributes }
+
+      it 'should return 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'should return error object' do
+        expect(json).to have_json_path('errors')
+        expect(json).to have_json_path('errors/0/source')
+        expect(json).to have_json_path('errors/0/detail')
+      end
+    end
   end
 
 
   describe 'PATCH /api/v1/tasks' do
     let(:valid_attributes) { {"data":{"type":"tasks","id":"2","attributes":{"title":"Updated Task Title"}}} }
     let(:valid_attributes_with_tags) { {"data":{"type":"tasks","id":"2","attributes":{"title":"Updated Task Title","tags": ["Urgent", "Home"]}}} }
+    let(:invalid_attributes) { {"data":{"type":"tasks","id":"2","attributes":{"title":""}}} }
 
     context 'update task with valid attributes' do
       before { patch v1_task_url(2), params: valid_attributes }
@@ -109,6 +125,21 @@ RSpec.describe 'V1::Tasks', type: :request do
         expect(task.tags.size).to eq(2)
         expect(task.tags.first.title).to eq('Urgent')
         expect(task.tags.second.title).to eq('Home')
+      end
+    end
+
+
+    context 'update task with invalid attributes' do
+      before { patch v1_task_url(2), params: invalid_attributes }
+
+      it 'should return 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'should return error object' do
+        expect(json).to have_json_path('errors')
+        expect(json).to have_json_path('errors/0/source')
+        expect(json).to have_json_path('errors/0/detail')
       end
     end
   end

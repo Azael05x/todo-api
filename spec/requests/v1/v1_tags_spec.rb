@@ -27,8 +27,10 @@ RSpec.describe 'V1::Tags', type: :request do
 
   describe 'POST /api/v1/tags' do
     let(:valid_attributes) { {"data":{"type":"undefined","id":"undefined","attributes":{"title":"Someday"}}} }
+    let(:invalid_attributes) do  {"data":{"type":"undefined","id":"undefined","attributes":{}}}
+    end
 
-    context 'create task with valid attributes' do
+    context 'create tag with valid attributes' do
       before { post v1_tags_url, params: valid_attributes }
 
       it 'should return 201' do
@@ -46,13 +48,28 @@ RSpec.describe 'V1::Tags', type: :request do
         expect(tag.title).to eq('Someday')
       end
     end
+
+    context 'create tag with invalid attributes' do
+      before { post v1_tags_url, params: invalid_attributes }
+
+      it 'should return 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'should return error object' do
+        expect(json).to have_json_path('errors')
+        expect(json).to have_json_path('errors/0/source')
+        expect(json).to have_json_path('errors/0/detail')
+      end
+    end
   end
 
 
   describe 'PATCH /api/v1/tag' do
-    let(:valid_attributes) { {"data":{"type":"tasks","id":"2","attributes":{"title":"Updated Tag Title"}}} }
+    let(:valid_attributes) { {"data":{"type":"tags","id":"2","attributes":{"title":"Updated Tag Title"}}} }
+    let(:invalid_attributes) { {"data":{"type":"tags","id":"2","attributes":{"title": ""}}} }
 
-    context 'update task with valid attributes' do
+    context 'update tag with valid attributes' do
       before { patch v1_tag_url(2), params: valid_attributes }
 
       it 'should return 200' do
@@ -68,6 +85,20 @@ RSpec.describe 'V1::Tags', type: :request do
       it 'should update tag' do
         task = Tag.find(2)
         expect(task.title).to eq('Updated Tag Title')
+      end
+    end
+
+    context 'update tag with invalid attributes' do
+      before { patch v1_tag_url(2), params: invalid_attributes }
+
+      it 'should return 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'should return error object' do
+        expect(json).to have_json_path('errors')
+        expect(json).to have_json_path('errors/0/source')
+        expect(json).to have_json_path('errors/0/detail')
       end
     end
   end

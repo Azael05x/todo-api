@@ -20,7 +20,7 @@ class V1::TagsController < ApplicationController
     if @tag.save
       render json: @tag, status: :created
     else
-      render json: @tag.errors, status: :unprocessable_entity
+      render json: @tag, status: :unprocessable_entity, serializer: ActiveModel::Serializer::ErrorSerializer
     end
   end
 
@@ -29,7 +29,7 @@ class V1::TagsController < ApplicationController
     if @tag.update(tag_params)
       render json: @tag
     else
-      render json: @tag.errors, status: :unprocessable_entity
+      render json: @tag, status: :unprocessable_entity, serializer: ActiveModel::Serializer::ErrorSerializer
     end
   end
 

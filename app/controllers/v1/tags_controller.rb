@@ -1,19 +1,18 @@
 class V1::TagsController < ApplicationController
   before_action :set_tag, only: [:show, :update, :destroy]
 
-  # GET /v1/tags
+  # GET /api/v1/tags
   def index
     @tags = Tag.all
-
     render json: @tags
   end
 
-  # GET /v1/tags/1
+  # GET /api/v1/tags/1
   def show
     render json: @tag
   end
 
-  # POST /v1/tags
+  # POST /api/v1/tags
   def create
     @tag = Tag.new(tag_params)
 
@@ -24,7 +23,7 @@ class V1::TagsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /v1/tags/1
+  # PATCH/PUT /api/v1/tags/1
   def update
     if @tag.update(tag_params)
       render json: @tag
@@ -33,7 +32,7 @@ class V1::TagsController < ApplicationController
     end
   end
 
-  # DELETE /v1/tags/1
+  # DELETE /api/v1/tags/1
   def destroy
     @tag.destroy
   end

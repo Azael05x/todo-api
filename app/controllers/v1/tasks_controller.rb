@@ -45,6 +45,6 @@ class V1::TasksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def task_params
-      params.fetch(:task, {})
+      ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:title])
     end
 end

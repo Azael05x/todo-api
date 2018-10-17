@@ -71,4 +71,18 @@ RSpec.describe 'V1::Tags', type: :request do
       end
     end
   end
+
+
+  describe 'DELETE /api/v1/tag' do
+    before { Task.first.update(tags: [Tag.first]) }
+    before { delete v1_tag_url(1) }
+
+    it 'should return 204' do
+      expect(response).to have_http_status(204)
+    end
+
+    it 'should remove relation from Task' do
+      expect(Task.first.tags.size).to eq(0)
+    end
+  end
 end

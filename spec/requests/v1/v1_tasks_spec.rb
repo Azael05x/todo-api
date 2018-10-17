@@ -21,6 +21,7 @@ RSpec.describe 'V1::Tasks', type: :request do
 
     context 'root level data relationships' do
       it { expect(json).to have_json_path('data/0/relationships/tags/data')  }
+      it { expect(parsed_json['data'][0]['relationships']['tags']['data'].size).to be > 0 }
     end
 
     context 'root level included attributes' do
@@ -29,6 +30,7 @@ RSpec.describe 'V1::Tasks', type: :request do
 
     context 'root level included relationships' do
       it { expect(json).to have_json_path('included/0/relationships/tasks/data')  }
+      it { expect(parsed_json['included'][0]['relationships']['tasks']['data'].size).to be > 0 }
     end
   end
 

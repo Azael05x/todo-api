@@ -26,7 +26,7 @@ class V1::TasksController < ApplicationController
   # PATCH/PUT /api/v1/tasks/1
   def update
     if @task.update(task_params)
-      render json: @task
+      render json: @task, include: ['tags']
     else
       render json: @task.errors, status: :unprocessable_entity
     end
@@ -45,6 +45,6 @@ class V1::TasksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def task_params
-      ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:title])
+      ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:title, :tags], keys: { tags: :tag_strings })
     end
 end

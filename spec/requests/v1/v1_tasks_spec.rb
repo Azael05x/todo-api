@@ -61,6 +61,7 @@ RSpec.describe 'V1::Tasks', type: :request do
 
   describe 'PATCH /api/v1/tasks' do
     let(:valid_attributes) { {"data":{"type":"tasks","id":"2","attributes":{"title":"Updated Task Title"}}} }
+    let(:valid_attributes_with_tags) { {"data":{"type":"tasks","id":"2","attributes":{"title":"Updated Task Title","tags": ["Urgent", "Home"]}}} }
 
     context 'update task with valid attributes' do
       before { patch v1_task_url(2), params: valid_attributes }
@@ -78,6 +79,36 @@ RSpec.describe 'V1::Tasks', type: :request do
       it 'should update task' do
         task = Task.find(2)
         expect(task.title).to eq('Updated Task Title')
+      end
+    end
+
+
+    context 'update task with valid attributes with tags' do
+      before { patch v1_task_url(2), params: valid_attributes_with_tags }
+
+      it 'should return 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'should return updated task' do
+        expect(json).to have_json_path('data/id')
+        expect(json).to have_json_path('data/attributes/title')
+        expect(json).to have_json_path('data/relationships/tags/data')
+
+        expect(parsed_json['data']['relationships']['tags']['data'].size).to be > 0
+        expect(parsed_json['data']['included'].size).to be > 0
+      end
+
+      it 'should update task' do
+        task = Task.find(2)
+        expect(task.title).to eq('Updated Task Title')
+      end
+
+      it 'should create tags' do
+        task = Task.find(2)
+        expect(task.tags.size).to eq(2)
+        expect(task.tags.first.title).to eq('Urgent')
+        expect(task.tags.second.title).to eq('Home')
       end
     end
   end

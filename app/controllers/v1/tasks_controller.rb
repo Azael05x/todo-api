@@ -4,12 +4,12 @@ class V1::TasksController < ApplicationController
   # GET /api/v1/tasks
   def index
     @tasks = Task.all
-    render json: @tasks
+    render json: @tasks, include: ['tags']
   end
 
   # GET /api/v1/tasks/1
   def show
-    render json: @task
+    render json: @task, include: ['tags']
   end
 
   # POST /api/v1/tasks
